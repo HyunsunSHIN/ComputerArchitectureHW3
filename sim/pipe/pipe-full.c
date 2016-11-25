@@ -151,12 +151,12 @@ long long gen_alufun()
 
 long long gen_set_cc()
 {
-    return (((id_ex_curr->icode) == (I_ALU)) | ((((id_ex_curr->icode) == 
-            (I_IADDQ)) & !((mem_wb_next->status) == (STAT_ADR) || 
-            (mem_wb_next->status) == (STAT_INS) || (mem_wb_next->status)
-             == (STAT_HLT))) & !((mem_wb_curr->status) == (STAT_ADR) || 
-          (mem_wb_curr->status) == (STAT_INS) || (mem_wb_curr->status) == 
-          (STAT_HLT))));
+    return ((((id_ex_curr->icode) == (I_ALU) || (id_ex_curr->icode) == 
+          (I_IADDQ)) & !((mem_wb_next->status) == (STAT_ADR) || 
+          (mem_wb_next->status) == (STAT_INS) || (mem_wb_next->status) == 
+          (STAT_HLT))) & !((mem_wb_curr->status) == (STAT_ADR) || 
+        (mem_wb_curr->status) == (STAT_INS) || (mem_wb_curr->status) == 
+        (STAT_HLT)));
 }
 
 long long gen_e_valA()
