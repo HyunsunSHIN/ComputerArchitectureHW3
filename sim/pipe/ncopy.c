@@ -14,13 +14,24 @@ word_t ncopy(word_t *src, word_t *dst, word_t len)
     word_t count = 0;
     word_t val;
 
-    while (len > 0) {
+    while (len - 1 > 0) {
+	/* first loop */
 	val = *src++;
 	*dst++ = val;
 	if (val > 0)
 	    count++;
-	len--;
+	/* second loop */
+	val = *src++;
+	*dst++ = val;
+	if(val > 0)
+	   count++;
+	/* at last decrease length */
+	len = len - 2;
     }
+
+    if(len > 0) 
+	{ val = *src; *dst = val; 
+		if(val>0){ count++;} }
     return count;
 }
 /* $end ncopy */

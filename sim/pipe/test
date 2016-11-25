@@ -1,0 +1,71 @@
+  # Loop header
+  xorq %rax,%rax    # count = 0;
+  andq %rdx, %rdx
+  jle Done
+  iaddq $-4, %rdx       # len = len - 4 
+  jl Tail
+
+Loop:  
+  mrmovq (%rdi), %r10   # read val from src
+  mrmovq 4(%rdi), %rcx  # read val from src +4
+  rmmovq %r10, (%rsi)   # store src[0] to dest[0]
+  andq %r10, %r10       # src[0] > 0 
+  jle Npos1              # yes ? goto Npos1:
+  iaddq $1, %rax        # count++
+
+Npos1:
+  rmmovq %rcx, 4(%rsi)  # store src[1] in dest[1]
+  andq %rcx, %rcx       # src[1] > 0 
+  jle Npos2              # No ? get the next element
+  iaddq $1, %rax        # count++
+  
+Npos2:
+  mrmovq 8(%rdi), %r10    # read val from src +8
+  mrmovq 12(%rdi), %rcx   # read val from src +12
+  rmmovq %r10, 8(%rsi)    # store src[2] in dest[2]
+  andq %r10, %r10         # src[2] > 0 
+  jle Npos3                # No ? get the next element
+  iaddq $1, %rax          # count++
+  
+Npos3:
+  rmmovq %rcx, 12(%rsi)   # store src[3] in dest[3]
+  andq %rcx, %rcx         # src[3] > 0 
+  jle Next                # No ? get the next element
+  iaddq $1, %rax          # count++
+
+Next: 
+  iaddq $16 , %rdi      # goto next four Npositions of src
+  iaddq $16 , %rsi      # goto next four Npositions of dest
+  iaddq $-4, %rdx       # len = len - 4
+  jge Loop              # if four left, do again
+
+Tail:
+  iaddq $4, %rdx        # get actual len  
+  
+FinalRound1:
+  iaddq $-1 , %rdx
+  jl Done                # Done
+  mrmovq (%rdi), %r10    # Take care of FinalRounds here
+  mrmovq 4(%rdi), %rcx
+  rmmovq %r10, (%rsi)
+  andq %r10, %r10
+  jle FinalRound2
+  iaddq $1, %rax
+  
+FinalRound2:
+  iaddq $-1 , %rdx
+  jl Done  
+  rmmovq %rcx, 4(%rsi)
+  andq %rcx, %rcx
+  jle FinalRound3
+  iaddq $1, %rax
+
+FinalRound3:
+  iaddq $-1 , %rdx
+  jl Done
+  mrmovq 8(%rdi), %r10
+  rmmovq %r10, 8(%rsi)
+  andq %r10, %r10
+  jle Done
+  iaddq $1, %rax  
+
